@@ -1,0 +1,48 @@
+#generateReport {
+    font-family: "Plus Jakarta Sans";
+}
+
+#generateReport .banner {
+    background-color: #ECF2FF;
+    border-radius: 16px;
+}
+
+#generateReport .bannerTitle {
+    margin: 0px;
+    font-weight: 600;
+    font-size: 1.2rem;
+
+}
+
+#generateReport .breadcrumbs {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+#generateReport .showShadow:hover{
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;;
+}
+
+.metric-card {
+    cursor: pointer;
+}
+
+.metric-card.selected {
+    box-shadow: 0 0.75rem 1.5rem rgba(0,0,0,0.12) !important;
+}
+
+.metric-arrow {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 12px solid #fff; /* default, overridden inline */
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+

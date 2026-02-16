@@ -1,0 +1,31 @@
+/* Override Bootstrap primary to your shade */
+.btn-primary {
+  background-color: #02008a;
+  border-color: #02008a;
+}
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Headings in deep blue */
+h4 {
+  color: #02008a;
+}
+
+/* Light background for form area */
+.container-fluid {
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Modal backdrop override when using show d-block */
+.modal.show.d-block {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* List-group styling for results */
+.list-group-item {
+  background: #fff;
+  border: 1px solid #ddd;
+}

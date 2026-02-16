@@ -1,0 +1,111 @@
+#welcome{
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 20px;
+}
+
+#welcome .services {
+    padding: 0 20px;
+}
+
+#welcome .services .row {
+    
+}
+
+
+#welcome .banner{
+    background-color: #ECF2FF;
+    border-radius: 16px;
+}
+
+h2.navbar-brand.mx-auto{
+    font-family: 'Tangerine' !important;
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+
+#welcome .services .title{
+    font-weight: 500;
+    font-size: large;
+}
+
+#welcome .servicesContent{
+    height: 20vh;
+    align-content: center;
+    font-weight: 500;
+    border-radius: 10px;
+    color: white;
+}
+
+#welcome .servicesContent:hover{    
+    color: black !important;
+    cursor: pointer;
+    background: #ECF2FF !important;
+    border: 1px solid rgb(204, 202, 202);
+    transition: all 0.2s ease-out;
+    box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2);
+}
+
+.card-link {
+    text-decoration: none;
+}
+
+#welcome .dashboard-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#welcome .dashboard-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+#welcome .card-preview {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+#welcome .card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#welcome .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 20px 20px 0;
+    padding: 0;
+    line-height: 1.4;
+}
+
+#welcome .card-button {
+    background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 16px 20px 20px;
+    align-self: flex-start;
+}
+
+#welcome .card-button:hover {
+    background: linear-gradient(135deg, #3730a3 0%, #2e1065 100%);
+    transform: translateX(4px);
+}
+
+#welcome .card-button:active {
+    transform: translateX(2px);
+}
