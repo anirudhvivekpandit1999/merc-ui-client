@@ -18,28 +18,32 @@ import Home from "./pages/Home";
 import CardDetails from "./pages/CardDetails";
 import ReportDetails from "./pages/reportDetails";
 // Define routes
-const router = createBrowserRouter([
-  { path: "/", element: <Login /> },
-  
+const router = createBrowserRouter(
+  [
+    { path: "/", element: <Login /> },
+    {
+      path: "/dashboard",
+      element: <Dashboard />,
+      children: [
+        { path: "", element: <Welcome /> },
+        { path: "RegulatoryParams", element: <RegulatoryParams /> },
+        { path: "generateReport", element: <GenerateReport /> },
+        { path: "ai", element: <AiModel /> },
+        { path: "ecr", element: <EnergyChargeEstimator /> },
+        { path: "coalSlagging", element: <CoalSlaggingForm /> },
+        { path: "RegulatoryParams2", element: <RegulatoryParams2 /> },
+        { path: "Welcome2", element: <Welcome2 /> },
+        { path: "generateReport2", element: <GenerateReport2 /> },
+        { path: "modDashboard", element: <Home /> },
+        { path: "modCard/:id", element: <CardDetails /> },
+        { path: "reportDetails", element: <ReportDetails /> }
+      ]
+    }
+  ],
   {
-    path: "/dashboard",
-    element: <Dashboard />,
-    children: [
-      { path: "", element: <Welcome /> },  // Default page in Dashboard
-      { path: "RegulatoryParams", element: <RegulatoryParams /> },
-      { path: "generateReport", element: <GenerateReport /> },
-      { path: "ai", element: <AiModel /> },
-      { path: "ecr", element: <EnergyChargeEstimator /> },
-      { path: "coalSlagging", element: <CoalSlaggingForm /> },
-      { path: "RegulatoryParams2", element: <RegulatoryParams2 /> },
-      { path: "Welcome2", element: <Welcome2 /> },
-      {path:"generateReport2", element:<GenerateReport2 />},
-      {path: "modDashboard" , element : <Home />},
-      {path : "modCard/:id",element:<CardDetails/>},
-      {path: 'reportDetails',element:<ReportDetails/>}
-    ]
+    basename: "/merc"
   }
-]);
+);
 
 const App = () => {
   return (
