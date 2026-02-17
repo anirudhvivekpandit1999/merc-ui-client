@@ -23,17 +23,30 @@ const Login = () => {
                                    p_password : password
                                })
                            }
-                           const response = await fetch(`${url}/api/login`, {
-                               method: 'POST',
-                               mode: 'cors',
-                               headers: {
-                                   'Content-Type': 'application/json',
-                                   'Access-Control-Allow-Origin': '*'
-                               },
-                               body: JSON.stringify(payload)
-                           });
+                        //    const response = await fetch(`${url}/api/login`, {
+                        //        method: 'POST',
+                        //        mode: 'cors',
+                        //        headers: {
+                        //            'Content-Type': 'application/json',
+                        //            'Access-Control-Allow-Origin': '*'
+                        //        },
+                        //        body: JSON.stringify(payload)
+                        //    });
 
-                        if (response.ok) {
+                           const response  = await postEncrypted(`${url}/api/login`,{
+                            p_username : username,
+                            p_password : password
+                           })
+
+                            const x = encryptData({
+                                Username : 'admin',
+                                Password : 'admin',
+                                CompanyId : 1
+                            })
+
+                           console.log(response);
+
+                        if (response.UserId) {
                                navigate('/dashboard');
                                }
         } catch (error) {
