@@ -1,7 +1,7 @@
 import CryptoJS from 'crypto-js';
 import axios from 'axios';
 
-const url = 'http://192.168.10.30:789';
+const url = '';
 
 const SECRET_KEY = CryptoJS.enc.Utf8.parse("qwertyuiopasdfghjklzxcvbnm123456");
 const IV = CryptoJS.enc.Utf8.parse("1234567890123456");
