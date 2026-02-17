@@ -5,7 +5,7 @@ import { url, decryptData, encryptData, postEncrypted2 } from "../security";
 import { showToast } from '../App';
 import { GlobalContext } from "../Tools/GlobalContext.jsx";
 const RegulatoryParams = () => {
-    const {setUnit , setGlobalTag} = React.useContext(GlobalContext);
+    const { setUnit, setGlobalTag } = React.useContext(GlobalContext);
     const [isDataFetched, setIsDataFetched] = useState(false);
     const [unitTags, setUnitTags] = useState([{ unitType: 'BSL' },
     { unitType: "CSTPS" },
@@ -125,9 +125,14 @@ const RegulatoryParams = () => {
 
 
             sessionStorage.clear('regparams');
-            sessionStorage.setItem('regparams', JSON.stringify(decryptedRes));
+            sessionStorage.setItem('regparams', (JSON.stringify(decryptedRes) || {}));
+            const result = decryptedRes[0]?.result;
 
-            const mainData = JSON.parse(decryptedRes[0].result).MainData;
+const mainData =
+    typeof result === "string"
+        ? JSON.parse(result)?.MainData ?? {}
+        : result?.MainData ?? {};
+
             console.log('Main Data:', mainData); // Debugging
             Object.entries(mainData).forEach((data) => {
                 regParamsData[data[0]] ? updateRegParamValue(data[0], data[1]) :
@@ -142,6 +147,7 @@ const RegulatoryParams = () => {
             console.log('res', decryptedRes)
             setIsDataFetched(true);
         } catch (error) {
+            console.log("error message handle Search ", error);
 
         }
     }
@@ -338,7 +344,7 @@ const RegulatoryParams = () => {
     };
 
     // Scroll/jump helper for the FAB. Looks for element with id 'ecrModel' and focuses it.
-    
+
 
 
     return (
@@ -382,27 +388,27 @@ const RegulatoryParams = () => {
                                     <i className="bi bi-tag"></i> Select Unit
                                 </label>
                                 {unitTags.map(x => (
-  <select
-    key={x.unitType}
-    className={`unit-select ${selectedUnitTag === x.unitType && selectedUnit ? "selected" : ""}`}
-    value={selectedUnitTag === x.unitType ? selectedUnit : x.unitType}         // ensure only this select shows the selected value
-    onChange={(e) => {
-      setSelectedUnit(e.target.value);
-      setSelectedUnitTag(x.unitType);
-      setGlobalTag(x.unitType);
-      setUnit(e.target.value);
-    }}
-  >
-    <option className="gg" value="" hidden>{x.unitType}</option>
-    {units
-      .filter((u) => u.unitType === x.unitType)
-      .map((unit) => (
-        <option key={unit.unitId} value={unit.unitName}>
-          {unit.unitName}
-        </option>
-      ))}
-  </select>
-))}
+                                    <select
+                                        key={x.unitType}
+                                        className={`unit-select ${selectedUnitTag === x.unitType && selectedUnit ? "selected" : ""}`}
+                                        value={selectedUnitTag === x.unitType ? selectedUnit : x.unitType}         // ensure only this select shows the selected value
+                                        onChange={(e) => {
+                                            setSelectedUnit(e.target.value);
+                                            setSelectedUnitTag(x.unitType);
+                                            setGlobalTag(x.unitType);
+                                            setUnit(e.target.value);
+                                        }}
+                                    >
+                                        <option className="gg" value="" hidden>{x.unitType}</option>
+                                        {units
+                                            .filter((u) => u.unitType === x.unitType)
+                                            .map((unit) => (
+                                                <option key={unit.unitId} value={unit.unitName}>
+                                                    {unit.unitName}
+                                                </option>
+                                            ))}
+                                    </select>
+                                ))}
 
                             </div>
 
@@ -609,7 +615,7 @@ const RegulatoryParams = () => {
             </div>
 
             {/* FAB - Floating Action Button: Jump to ECR Model */}
-            
+
 
         </div >
     )
