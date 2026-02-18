@@ -471,7 +471,7 @@ const mainData =
                             <div className="accordion-item">
                                 <h5 className="accordion-header" id="headingOne">
                                     <button className="accordion-button collapsed p-2 fs-7" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-controls="collapseOne">
-                                        Regulatory Parameters Approved by Commission for (2024-2025) fiscal year
+                                        Regulatory Parameters Approved by Commission for the fiscal year
                                     </button>
                                 </h5>
                                 <div id="collapseOne" className="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">

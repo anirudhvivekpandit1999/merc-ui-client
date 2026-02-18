@@ -575,7 +575,7 @@ export default function EnergyChargeEstimator() {
 
                   <div className="dash-card-body result-value">
                     {typeof results?.currentCoalFactor !== 'undefined' ? (
-                      <span className="dash-label fs-4">{Number(results.currentCoalFactor).toLocaleString(undefined, { maximumFractionDigits: 3 })}</span>
+                      <span className="dash-label fs-6">{Number(results.currentCoalFactor).toLocaleString(undefined, { maximumFractionDigits: 3 })}</span>
                     ) : (
                       <span className="muted">—</span>
                     )}
