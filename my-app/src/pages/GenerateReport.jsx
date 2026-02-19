@@ -3,6 +3,7 @@ import '../css/GenerateReport.css';
 import { Link } from 'react-router-dom';
 import Parameters from "../pages/Parameters";
 import { GlobalContext } from "../Tools/GlobalContext";
+import { all } from "axios";
 const FusionCharts = window.FusionCharts;
 
 const GenerateReport = () => {
@@ -525,7 +526,7 @@ const metrics =
   <Parameters
     name="AVF"
     header="Availability Factor"
-    data={metrics?.AVF}
+    data={allData}
   />
 )}
 
@@ -533,7 +534,7 @@ const metrics =
   <Parameters
     name="HR"
     header="Heat Rate"
-    data={metrics?.HR}
+    data={allData}
   />
 )}
 
@@ -541,7 +542,7 @@ const metrics =
   <Parameters
     name="AP"
     header="Auxiliary Power"
-    data={metrics?.AP}
+    data={allData}
   />
 )}
 
@@ -549,7 +550,7 @@ const metrics =
   <Parameters
     name="SO"
     header="Specific Oil Consumption"
-    data={metrics?.SO}
+    data={allData}
   />
 )}
 
@@ -557,7 +558,7 @@ const metrics =
   <Parameters
     name="TL"
     header="Transit Loss"
-    data={metrics?.TL}
+    data={allData}
   />
 )}
 

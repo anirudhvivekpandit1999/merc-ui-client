@@ -301,6 +301,8 @@ const mainData =
                 resolve('Data fetched and state updated successfully');
                 sessionStorage.clear('regparams');
                 sessionStorage.setItem('regparams', JSON.stringify(decryptedRes).result);
+                localStorage.setItem('PeakAVFAchieved',otherParams.APAVF.value);
+                localStorage.setItem('StationHeatRate',regParamsData.NSHR.value);
 
                 const mainData = JSON.parse(decryptedRes).result.MainData;
                 console.log('Main Data:', mainData); // Debugging
@@ -333,7 +335,7 @@ const mainData =
     const updateotherParams = (key, newValue) => {
         setotherParams(prevData => {
             const existingItem = prevData?.[key];
-            if (!existingItem) return prevData; // Avoid crashing if key is wrong
+            if (!existingItem) return prevData; 
             return {
                 ...prevData,
                 [key]: {

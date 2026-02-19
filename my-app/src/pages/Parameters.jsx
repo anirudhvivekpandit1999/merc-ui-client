@@ -114,14 +114,104 @@ function waitForVisibleElement(ref, maxFrames = 60) {
 }
 
 const Parameters = ({ name = "AVF", header, data }) => {
-  const safeData = data && typeof data === "object"
-    ? defaultDatasets[name] ?? defaultDatasets["AVF"]
-    : defaultDatasets[name] ?? defaultDatasets["AVF"];
+  const safeData = data
+  console.log("safe",safeData);
 
-  const [analyticsTable] = useState(safeData.AnalyticsTable);
+  const analyticsTable = (() => {
+  switch (name) {
+    case "AVF":
+      return [
+        { Parameter: "AAPC", Value: safeData.MainData.AAPC },
+        { Parameter: "APAVF", Value: safeData.MainData.APAVF },
+        { Parameter: "ATL", Value: safeData.MainData.ATL }
+      ];
+    case "HR":
+      return [
+        { Parameter: "Avg Heat Rate", Value: safeData.MainData.ATL },
+        { Parameter: "AAVFTDR", Value: safeData.Calculations.AAVFTDR },
+        { Parameter: "ACSFOC", Value: safeData.Calculations.ACSFOC }
+      ];
+    case "AP":
+      return [
+        { Parameter: "AFOC", Value: safeData.MainData.AFOC },
+        { Parameter: "AWCC", Value: safeData.MainData.AWCC },
+        { Parameter: "AICCC", Value: safeData.MainData.AICCC }
+      ];
+    case "SO":
+      return [
+        { Parameter: "ACSFOC", Value: safeData.Calculations.ACSFOC },
+        { Parameter: "ASFOC", Value: safeData.Calculations.ASFOC },
+        { Parameter: "NSFFOC", Value: safeData.Calculations.NSFFOC }
+      ];
+    case "TL":
+      return [
+        { Parameter: "ATL", Value: safeData.MainData.ATL },
+        { Parameter: "TNFCC", Value: safeData.Calculations.TNFCC },
+        { Parameter: "NSLDOC", Value: safeData.Calculations.NSLDOC }
+      ];
+    default:
+      return [];
+  }
+})();
+
+const performanceTable = (() => {
+  switch (name) {
+    case "AVF":
+      return [
+        { Parameter: "Gain AVF", Value: safeData.CalculateGainValues.GainAVF },
+        { Parameter: "Gain MTBF", Value: safeData.CalculateGainValues.GainMTBF },
+        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+      ];
+    case "HR":
+      return [
+        { Parameter: "Gain MTBF", Value: safeData.CalculateGainValues.GainMTBF },
+        { Parameter: "Gain Ramp Rate", Value: safeData.CalculateGainValues.GainRampRate },
+        { Parameter: "Gain Peak AVF", Value: safeData.CalculateGainValues.GainPeakAVF }
+      ];
+    case "AP":
+      return [
+        { Parameter: "Gain APC", Value: safeData.CalculateGainValues.GainAPC },
+        { Parameter: "Gain AVF", Value: safeData.CalculateGainValues.GainAVF },
+        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+      ];
+    case "SO":
+      return [
+        { Parameter: "Gain SFOC", Value: safeData.CalculateGainValues.GainSFOC },
+        { Parameter: "Gain TL", Value: safeData.CalculateGainValues.GainTL },
+        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+      ];
+    case "TL":
+      return [
+        { Parameter: "Gain TL", Value: safeData.CalculateGainValues.GainTL },
+        { Parameter: "Gain Ramp Rate", Value: safeData.CalculateGainValues.GainRampRate },
+        { Parameter: "Gain Peak AVF", Value: safeData.CalculateGainValues.GainPeakAVF }
+      ];
+    default:
+      return [];
+  }
+})();
+
+const particularsTable = (() => {
+  switch (name) {
+    case "AVF":
+      return [
+        { Parameter: "Gain SFOC", Mus: safeData.CalculateGainValues.GainSFOC, Per: safeData.CalculateROEValues.ROE_RP },
+        { Parameter: "Gain TL", Mus: safeData.CalculateGainValues.GainTL, Per: safeData.CalculateROEValues.ROE_MTBF_Percent }
+      ];
+    case "HR":
+    case "AP":
+    case "SO":
+    case "TL":
+      return [
+        { Parameter: "ROE RP", Mus: safeData.CalculateGainValues.GainSFOC, Per: safeData.CalculateROEValues.ROE_RP },
+        { Parameter: "ROE MTBF %", Mus: safeData.CalculateGainValues.GainTL, Per: safeData.CalculateROEValues.ROE_MTBF_Percent }
+      ];
+    default:
+      return [];
+  }
+})();
+
   const [donutData, setDonutData] = useState([]);
-  const [performanceTable] = useState(safeData.PerformanceTable);
-  const [particularsTable] = useState(safeData.ParticularsTable);
 
   const uidRef = useRef("para-" + Math.random().toString(36).slice(2, 9));
   const barId = `${uidRef.current}-bar`;
