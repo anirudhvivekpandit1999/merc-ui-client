@@ -7,12 +7,12 @@ import { all } from "axios";
 const FusionCharts = window.FusionCharts;
 
 const GenerateReport = () => {
-    const {unit,globalTag , generation} = useContext(GlobalContext);
-    
+    const { unit, globalTag, generation } = useContext(GlobalContext);
+
     const [chartData, setChartData] = useState([{
         "label": "Avail factor",
         "value": "0"
-    }, {    
+    }, {
         "label": "Heat rate",
         "value": "1.96"
     }, {
@@ -26,22 +26,22 @@ const GenerateReport = () => {
         "value": "0.076"
     }]);
     const [allData, setallData] = useState(() => {
-  const stored = sessionStorage.getItem('regparams');
-  if (!stored) return null;
+        const stored = sessionStorage.getItem('regparams');
+        if (!stored) return null;
 
-  try {
-    const parsed = JSON.parse(stored);
-    const result = parsed?.[0]?.result;
+        try {
+            const parsed = JSON.parse(stored);
+            const result = parsed?.[0]?.result;
 
-    return typeof result === "string"
-      ? JSON.parse(result)
-      : result ?? null;
+            return typeof result === "string"
+                ? JSON.parse(result)
+                : result ?? null;
 
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-});
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
+    });
     const [cardValue, setCardValue] = useState([])
     const [totalGainTable, settotalGainTable] = useState([])
     const [incentiveGainTable, setincentiveGainTable] = useState([])
@@ -174,227 +174,254 @@ const GenerateReport = () => {
 
     }
     const incentiveDonutChart = () => {
-    if (!allData) return;
-
-    // ✅ Parse only if it's a string
-    const parsedData =
-        typeof allData === "string"
-            ? JSON.parse(allData)
-            : allData;
-
-    // ✅ Safe extraction with fallbacks
-    const {
-        CalculateGainValues = [],
-        MainData = {},
-        IncentiveTable = {}
-    } = parsedData || {};
-
-    console.log("IncentiveTable", IncentiveTable);
-
-    const {
-        MTBFValues = [],
-        RRValues: RampRateValues = [],
-        PAVFValues = [],
-        FGMOValues = []
-    } = IncentiveTable || {};
-
-    const dataSource = {
-        chart: {
-            caption: "Incentives",
-            subcaption: "Gain/ Loss",
-            showpercentvalues: "1",
-            aligncaptionwithcanvas: "0",
-            captionpadding: "0",
-            decimals: "1",
-            theme: "fusion"
-        },
-        data: [
-            {
-                label: "MTBF",
-                value: MTBFValues?.[0]?.maxv ?? 0
-            },
-            {
-                label: "Ramp Rate",
-                value: RampRateValues?.[0]?.maxv ?? 0
-            },
-            {
-                label: "Peak AVF",
-                value: PAVFValues?.[0]?.maxv ?? 0
-            },
-            {
-                label: "FOMO Status",
-                value: FGMOValues?.[0]?.valuev ?? 0
-            }
-        ]
-    };
-
-    FusionCharts.ready(() => {
-        const renderFn = () => {
-            new FusionCharts({
-                type: "doughnut2d",
-                renderAt: "donutChart",
-                width: "100%",
-                height: "100%",
-                dataFormat: "json",
-                dataSource
-            }).render();
-        };
-
-        const el = document.getElementById("donutChart");
-
-        if (el) {
-            renderFn();
-        } else {
-            let tries = 0;
-            const tryRender = () => {
-                const e = document.getElementById("donutChart");
-                if (e) return renderFn();
-                tries += 1;
-                if (tries < 12) setTimeout(tryRender, 100);
-                else console.warn("incentiveDonutChart: donutChart not found");
-            };
-            tryRender();
-        }
-    });
-};
-
-
-    const populateData = () => {
-    try {
         if (!allData) return;
 
-        // ✅ Parse only if needed
+        // ✅ Parse only if it's a string
         const parsedData =
             typeof allData === "string"
                 ? JSON.parse(allData)
                 : allData;
 
+        // ✅ Safe extraction with fallbacks
         const {
-            CalculateGainValues = {},
-            MainData = {}
+            CalculateGainValues = [],
+            MainData = {},
+            IncentiveTable = {}
         } = parsedData || {};
 
-        console.log("CalculateGainValues", CalculateGainValues);
+        console.log("IncentiveTable", IncentiveTable);
 
-        // Ensure CalculateGainValues is object
-        const gains =
-            typeof CalculateGainValues === "string"
-                ? JSON.parse(CalculateGainValues)
-                : CalculateGainValues;
+        const {
+            MTBFValues = [],
+            RRValues: RampRateValues = [],
+            PAVFValues = [],
+            FGMOValues = []
+        } = IncentiveTable || {};
 
-        const main =
-            typeof MainData === "string"
-                ? JSON.parse(MainData)
-                : MainData;
+        const dataSource = {
+            chart: {
+                caption: "Incentives",
+                subcaption: "Gain/ Loss",
+                showpercentvalues: "1",
+                aligncaptionwithcanvas: "0",
+                captionpadding: "0",
+                decimals: "1",
+                theme: "fusion"
+            },
+            data: [
+                {
+                    label: "MTBF",
+                    value: MTBFValues?.[0]?.maxv ?? 0
+                },
+                {
+                    label: "Ramp Rate",
+                    value: RampRateValues?.[0]?.maxv ?? 0
+                },
+                {
+                    label: "Peak AVF",
+                    value: PAVFValues?.[0]?.maxv ?? 0
+                },
+                {
+                    label: "FOMO Status",
+                    value: FGMOValues?.[0]?.valuev ?? 0
+                }
+            ]
+        };
 
-        // ---------------- Chart Data ----------------
-        setChartData([
-            { label: "AVF", value: gains?.GainAVF ?? 0 },
-            { label: "SHR", value: gains?.GainNSHR ?? 0 },
-            { label: "APC", value: gains?.GainAPC ?? 0 },
-            { label: "SFOC", value: gains?.GainSFOC ?? 0 },
-            { label: "Transit Loss", value: gains?.GainTL ?? 0 }
-        ]);
+        FusionCharts.ready(() => {
+            const renderFn = () => {
+                new FusionCharts({
+                    type: "doughnut2d",
+                    renderAt: "donutChart",
+                    width: "100%",
+                    height: "100%",
+                    dataFormat: "json",
+                    dataSource
+                }).render();
+            };
 
-        // ---------------- Cards ----------------
-        const totalGain =
-            (gains?.GainAVF ?? 0) +
-            (gains?.GainAPC ?? 0) +
-            (gains?.GainSFOC ?? 0) +
-            (gains?.GainTL ?? 0);
+            const el = document.getElementById("donutChart");
 
-        setCardValue([
-            {
-                id: 1,
-                name: "Total Gain/ Loss",
-                value: totalGain.toFixed(2),
-                backgroundColor: "#ECF2FF",
-                color: "#5D87FF",
-                active: true
-            },
-            {
-                id: 2,
-                name: "Availability Factor",
-                value: (gains?.GainAVF ?? 0).toFixed(2),
-                backgroundColor: "#FEF5E5",
-                color: "#FFB32C",
-                active: false
-            },
-            {
-                id: 3,
-                name: "Heat Rate",
-                value: (gains?.GainNSHR ?? 0).toFixed(2),
-                backgroundColor: "#E8F7FF",
-                color: "#49BEFF",
-                active: false
-            },
-            {
-                id: 4,
-                name: "Auxiliary Power",
-                value: (gains?.GainAPC ?? 0).toFixed(2),
-                backgroundColor: "#FDEDE8",
-                color: "#FA8A6D",
-                active: false
-            },
-            {
-                id: 5,
-                name: "Specific Oil",
-                value: (gains?.GainSFOC ?? 0).toFixed(2),
-                backgroundColor: "#53887dff",
-                color: "#5EEAD0",
-                active: false
-            },
-            {
-                id: 6,
-                name: "Transit Loss",
-                value: (gains?.GainTL ?? 0).toFixed(2),
-                backgroundColor: "#EBF3FE",
-                color: "#599EFF",
-                active: false
+            if (el) {
+                renderFn();
+            } else {
+                let tries = 0;
+                const tryRender = () => {
+                    const e = document.getElementById("donutChart");
+                    if (e) return renderFn();
+                    tries += 1;
+                    if (tries < 12) setTimeout(tryRender, 100);
+                    else console.warn("incentiveDonutChart: donutChart not found");
+                };
+                tryRender();
             }
-        ]);
+        });
+    };
 
-        // ---------------- Total Gain Table ----------------
-        settotalGainTable([
-            {
-                parameter: "Availability factor (%)",
-                normative: main?.NAVF ?? 0,
-                achieved: main?.AAVFTDR ?? 0
-            },
-            {
-                parameter: "Heat Rate (kcal/kwh)",
-                normative: main?.NSHR ?? 0,
-                achieved: main?.ASHR ?? 0
-            },
-            {
-                parameter: "Auxiliary Power Consumption (%)",
-                normative: main?.NAPC ?? 0,
-                achieved: main?.AAPC ?? 0
-            },
-            {
-                parameter: "Specific Oil Consumption (ml/kwh)",
-                normative: main?.NSFOC ?? 0,
-                achieved: main?.ASFOC ?? 0
-            },
-            {
-                parameter: "Transit Loss (%)",
-                normative: main?.NTL ?? 0,
-                achieved: main?.ATL ?? 0
-            }
-        ]);
 
-        // ---------------- Incentive Table ----------------
-        setincentiveGainTable([
-            { parameter: "MTBF (days)", normative: "45", achieved: "56", total: 0.06 },
-            { parameter: "Ramp rate above 1%", normative: "%/min", achieved: "0.500", total: 0.06 },
-            { parameter: "Peak AVF (%)", normative: "75", achieved: "86", total: 0.06 },
-            { parameter: "FGMO status", normative: "In service", achieved: "y", total: 0.149 }
-        ]);
+    const populateData = () => {
+        try {
 
-    } catch (error) {
-        console.error("Error processing data:", error);
-    }
-};
+
+            // ✅ Parse only if needed
+            const parsedData =
+                typeof allData === "string"
+                    ? JSON.parse(allData)
+                    : allData;
+
+            const {
+                CalculateGainValues = {},
+                MainData = {}
+            } = parsedData || {};
+
+            console.log("CalculateGainValues", CalculateGainValues);
+
+            // Ensure CalculateGainValues is object
+            const gains =
+                typeof CalculateGainValues === "string"
+                    ? JSON.parse(CalculateGainValues)
+                    : CalculateGainValues;
+
+            const main =
+                typeof MainData === "string"
+                    ? JSON.parse(MainData)
+                    : MainData;
+
+            // ---------------- Chart Data ----------------
+            setChartData([
+                { label: "AVF", value: gains?.GainAVF ?? 0 },
+                { label: "SHR", value: gains?.GainNSHR ?? 0 },
+                { label: "APC", value: gains?.GainAPC ?? 0 },
+                { label: "SFOC", value: gains?.GainSFOC ?? 0 },
+                { label: "Transit Loss", value: gains?.GainTL ?? 0 }
+            ]);
+
+            // ---------------- Cards ----------------
+            const storedData = localStorage.getItem("NEW_ALL_DATA");
+
+            const x = JSON.parse(storedData);
+            
+            console.log(x.TotalGain);
+            console.log(x.GainAVF);
+            console.log(x.GainNSHR);
+            console.log(x.GainAPC);
+            console.log(x.GainSFOC);
+            console.log(x.GainTL);
+            console.log(x.NormativeAVF);
+            console.log(x.AchievedAVF);
+            console.log(x.NormativeHeatRate);
+            console.log(x.AchievedHeatRate);
+            console.log(x.NAPC);
+            console.log(x.AAPC);
+            
+            
+            
+            
+            const totalGain = parseFloat(x.TotalGain)
+            const gainAVF = parseFloat(x.GainAVF)
+            const GainNSHR = parseFloat(x.GainNSHR)
+            const GainAPC = parseFloat(x.GainAPC)
+            const GainSFOC = parseFloat(x.GainSFOC)
+            const GainTL = parseFloat(x.GainTL)
+            const NAVF  = parseFloat(x.NormativeAVF) 
+            const AchievedAVF = parseFloat(x.AchievedAVF)
+            const NormativeHeatRate = parseFloat(x.NormativeHeatRate)
+            const AchievedHeatRate = parseFloat(x.AchievedHeatRate)
+            const NAPC = parseFloat(x.NAPC)
+
+
+            setCardValue([
+                {
+                    id: 1,
+                    name: "Total Gain/ Loss",
+                    value: totalGain.toFixed(2),
+                    backgroundColor: "#ECF2FF",
+                    color: "#5D87FF",
+                    active: true
+                },
+                {
+                    id: 2,
+                    name: "Availability Factor",
+                    value: gainAVF.toFixed(2),
+                    backgroundColor: "#FEF5E5",
+                    color: "#FFB32C",
+                    active: false
+                },
+                {
+                    id: 3,
+                    name: "Heat Rate",
+                    value: GainNSHR.toFixed(2),
+                    backgroundColor: "#E8F7FF",
+                    color: "#49BEFF",
+                    active: false
+                },
+                {
+                    id: 4,
+                    name: "Auxiliary Power",
+                    value: GainAPC.toFixed(2),
+                    backgroundColor: "#FDEDE8",
+                    color: "#FA8A6D",
+                    active: false
+                },
+                {
+                    id: 5,
+                    name: "Specific Oil",
+                    value: GainSFOC.toFixed(2),
+                    backgroundColor: "#53887dff",
+                    color: "#5EEAD0",
+                    active: false
+                },
+                {
+                    id: 6,
+                    name: "Transit Loss",
+                    value: GainTL.toFixed(2),
+                    backgroundColor: "#EBF3FE",
+                    color: "#599EFF",
+                    active: false
+                }
+            ]);
+
+            // ---------------- Total Gain Table ----------------
+            settotalGainTable([
+                {
+                    parameter: "Availability factor (%)",
+                    normative: NAVF.toFixed(2),
+                    achieved: AchievedAVF.toFixed(2)
+                },
+                {
+                    parameter: "Heat Rate (kcal/kwh)",
+                    normative: NormativeHeatRate.toFixed(2),
+                    achieved: AchievedHeatRate.toFixed(2)
+                },
+                {
+                    parameter: "Auxiliary Power Consumption (%)",
+                    normative: NAPC.toFixed(2),
+                    achieved: main?.AAPC ?? 0
+                },
+                {
+                    parameter: "Specific Oil Consumption (ml/kwh)",
+                    normative: main?.NSFOC ?? 0,
+                    achieved: main?.ASFOC ?? 0
+                },
+                {
+                    parameter: "Transit Loss (%)",
+                    normative: main?.NTL ?? 0,
+                    achieved: main?.ATL ?? 0
+                }
+            ]);
+
+            // ---------------- Incentive Table ----------------
+            setincentiveGainTable([
+                { parameter: "MTBF (days)", normative: "45", achieved: "56", total: 0.06 },
+                { parameter: "Ramp rate above 1%", normative: "%/min", achieved: "0.500", total: 0.06 },
+                { parameter: "Peak AVF (%)", normative: "75", achieved: "86", total: 0.06 },
+                { parameter: "FGMO status", normative: "In service", achieved: "y", total: 0.149 }
+            ]);
+
+        } catch (error) {
+            console.error("Error processing data:", error);
+        }
+    };
 
     const selectParameter = (selectedName) => {
         try {
@@ -412,42 +439,42 @@ const GenerateReport = () => {
     }
 
     const jumpToEcrModel = () => {
-window.location.href = `/dashboard/ecr?unit=${unit}&tag=${globalTag}`;
+        window.location.href = `/dashboard/ecr?unit=${unit}&tag=${globalTag}`;
     }
 
     const parsedData =
-  typeof allData === "string"
-    ? JSON.parse(allData)
-    : allData || {};
+        typeof allData === "string"
+            ? JSON.parse(allData)
+            : allData || {};
 
-const metrics =
-  typeof parsedData?.Metrics === "string"
-    ? JSON.parse(parsedData.Metrics)
-    : parsedData?.Metrics || {};
+    const metrics =
+        typeof parsedData?.Metrics === "string"
+            ? JSON.parse(parsedData.Metrics)
+            : parsedData?.Metrics || {};
 
 
     return (
         <div id="generateReport">
             <div className=" container my-1 ms-0 ps-0 align-items-center ">
-                
-        <div className="d-flex align-items-center ">
-                <div className="d-flex align-items-center justify-content-start ">
-                    <Link to="/Dashboard">Home</Link>
-                    <div className="d-flex align-items-center ms-2">
-                        <i style={{ fontSize: "6px" }} className="bi bi-circle-fill"></i>
-                        <Link to="/dashboard/RegulatoryParams" className="ms-2">Regulatory Parameters</Link>
+
+                <div className="d-flex align-items-center ">
+                    <div className="d-flex align-items-center justify-content-start ">
+                        <Link to="/Dashboard">Home</Link>
+                        <div className="d-flex align-items-center ms-2">
+                            <i style={{ fontSize: "6px" }} className="bi bi-circle-fill"></i>
+                            <Link to="/dashboard/RegulatoryParams" className="ms-2">Regulatory Parameters</Link>
+                        </div>
+                        <div className="d-flex align-items-center ms-2">
+                            <i style={{ fontSize: "6px" }} className="bi bi-circle-fill"></i>
+                            <span className="ms-2">{unit}</span>
+                        </div>
                     </div>
-                    <div className="d-flex align-items-center ms-2">
-                        <i style={{ fontSize: "6px" }} className="bi bi-circle-fill"></i>
-                        <span className="ms-2">{unit}</span>
+                    <div className="d-flex align-items-center justify-content-center" style={{ width: "40vw" }} >
+
+                        <span className="bannerTitle  ">Regulatory Parameters</span>
+
                     </div>
                 </div>
-                <div className="d-flex align-items-center justify-content-center" style={{width:"40vw"}} > 
-      
-                              <span className="bannerTitle  ">Regulatory Parameters</span>
-      
-                          </div>
-                    </div>
 
             </div>
             <div className="row mt-3">
@@ -523,44 +550,44 @@ const metrics =
 
             {/* Parameter sections */}
             {cardValue.some(el => el.active && el.id === 2) && (
-  <Parameters
-    name="AVF"
-    header="Availability Factor"
-    data={allData}
-  />
-)}
+                <Parameters
+                    name="AVF"
+                    header="Availability Factor"
+                    data={allData}
+                />
+            )}
 
-{cardValue.some(el => el.active && el.id === 3) && (
-  <Parameters
-    name="HR"
-    header="Heat Rate"
-    data={allData}
-  />
-)}
+            {cardValue.some(el => el.active && el.id === 3) && (
+                <Parameters
+                    name="HR"
+                    header="Heat Rate"
+                    data={allData}
+                />
+            )}
 
-{cardValue.some(el => el.active && el.id === 4) && (
-  <Parameters
-    name="AP"
-    header="Auxiliary Power"
-    data={allData}
-  />
-)}
+            {cardValue.some(el => el.active && el.id === 4) && (
+                <Parameters
+                    name="AP"
+                    header="Auxiliary Power"
+                    data={allData}
+                />
+            )}
 
-{cardValue.some(el => el.active && el.id === 5) && (
-  <Parameters
-    name="SO"
-    header="Specific Oil Consumption"
-    data={allData}
-  />
-)}
+            {cardValue.some(el => el.active && el.id === 5) && (
+                <Parameters
+                    name="SO"
+                    header="Specific Oil Consumption"
+                    data={allData}
+                />
+            )}
 
-{cardValue.some(el => el.active && el.id === 6) && (
-  <Parameters
-    name="TL"
-    header="Transit Loss"
-    data={allData}
-  />
-)}
+            {cardValue.some(el => el.active && el.id === 6) && (
+                <Parameters
+                    name="TL"
+                    header="Transit Loss"
+                    data={allData}
+                />
+            )}
 
             {/* Beautified FAB placed bottom-right */}
             <div className="fab-rcp" role="navigation" aria-label="Quick actions">

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import '../css/RegulatoryParams.css';
 import { url, decryptData, encryptData, postEncrypted2 } from "../security";
 import { showToast } from '../App';
 import { GlobalContext } from "../Tools/GlobalContext.jsx";
-import { bslUnit3, bslUnit45, cstpsUnit37, cstpsUnit89, kpkdUnit5, kpkUnit14, ktpsUnit6, ktpsUnit810, ntpsUnit35, paralitpsUnit67, paralitpsUnit8, parastpsUnit34 } from "../../../globals.jsx";
+import { bslUnit3, bslUnit45, calculateGainValues, calculateROEValues, calculations, cstpsUnit37, cstpsUnit89, kpkdUnit5, kpkUnit14, ktpsUnit6, ktpsUnit810, ntpsUnit35, paralitpsUnit67, paralitpsUnit8, parastpsUnit34 } from "../../../globals.jsx";
 import { all } from "axios";
 const RegulatoryParams = () => {
     const { setUnit, setGlobalTag } = React.useContext(GlobalContext);
@@ -38,7 +38,7 @@ const RegulatoryParams = () => {
     const [endDate, setEndDate] = useState('');
     const [allData, setAllData] = useState({});
 
-
+    const navigation = useNavigate();
 
     // Inject minimal FAB CSS so you can drop this component into your existing styles without editing CSS files
     useEffect(() => {
@@ -1053,6 +1053,86 @@ const RegulatoryParams = () => {
         });
     };
 
+    const handleSubmit = () => {
+        let parsedValues = {
+            ROE: regParamsData.ROE.value,
+            AMTBF: otherParams.AMTBF.value,
+            APAVF: otherParams.APAVF.value,
+            ARR: otherParams.ARR.value,
+            IC: regParamsData.IC.value,
+            AICC: consumption.AICC.value,
+            AGEN: genAndCons.AGEN.value,
+            NAVF: regParamsData.NAVF.value,
+            NSHR: regParamsData.NSHR.value,
+            NAPC: regParamsData.NAPC.value,
+            AWCC: consumption.AWCC.value,
+            ACGCV: genAndCons.ACGCV.value,
+            ALDOC: consumption.ALDOC.value,
+            ALDOLC: costs.ALDOLC.value,
+            NSFOC: regParamsData.NSFOC.value,
+            ARCC: consumption.ARCC.value,
+            AFOGCV: genAndCons.AFOGCV.value,
+            AWGCVR: genAndCons.AWGCVR.value,
+
+            AIGCVR: genAndCons.AIGCVR.value,
+            ARGCVB: genAndCons.ARGCVB.value,
+            OPDCTDR: otherParams.OPDCTDR.value,
+            NADLURGCV: regParamsData.NADLURGCV.value,
+            ARGCVR: genAndCons.ARGCVR.value,
+            AIGCVB: genAndCons.AIGCVB.value,
+            NADLUWGCV: regParamsData.NADLUWGCV.value,
+            ATLC: otherParams.ATLC.value,
+            NTL: regParamsData.NTL.value,
+            OVC: otherParams.OVC.value,
+            AFOC: consumption.AFOC.value,
+            AFOLC: costs.AFOLC.value,
+            APGEN: genAndCons.AGEN.value,
+            NRGCVB: genAndCons.ARGCVB.value,
+
+            NWGCVB: genAndCons.AWGCVB.value,
+            NIGCVB: genAndCons.AIGCVB.value,
+            NIGCVR: genAndCons.AIGCVR.value,
+            NFCEWC: regParamsData.NFCEWC.value,
+            NLDOGCV: genAndCons.ALDOGCV.value,
+            NFOGCV: genAndCons.AFOGCV.value,
+            PDCTDR: otherParams.PDCTDR.value,
+            NWCLC: costs.AWCLC.value,
+            NICLC: costs.AICLC.value,
+            NLDOLC: costs.ALDOLC.value,
+            NFOLC: costs.AFOLC.value,
+            NSL: regParamsData.NSL.value,
+            AAPCM: genAndCons.AAPC.value,
+            ADCTDR: otherParams.ADCTDR.value,
+            ALDOGCV: genAndCons.ALDOGCV.value,
+
+            ARCLC: costs.ARCLC.value,
+            AWCLC: costs.AWCLC.value,
+            AICLC: costs.AICLC.value,
+            IRCCC: costs.IRCCC.value,
+            PDCHDS: otherParams.PDCHDS.value
+        }
+        const TDR = (new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)
+        const x = calculateROEValues(parsedValues, TDR, 365)
+        const y = calculations(parsedValues, TDR, 365)
+        const z = calculateGainValues(parsedValues, y, x, TDR, 365)
+        console.log("[DEBUG calculate ROE Values Result : ", x)
+        console.log("[DEBUG calculations Result : ", y)
+        console.log("[DEBUG calculate Gain Values Result : ", z)
+        let full = {TotalGain : z.netGainLoss , GainAVF : z.gainAVF , GainNSHR : z.gainNSHR , GainAPC : z.gainAPC,
+            GainSFOC : z.gainSFOC, GainTL : z.gainTL, NormativeAVF : regParamsData.NAVF.value , AchievedAVF : y.AAVFTDR,
+            NormativeHeatRate : regParamsData.NSHR.value , AchievedHeatRate  : y.ASHR , NAPC : regParamsData.NAPC.value,
+            AAPC : y.AAPC
+         }
+       
+        localStorage.setItem("NEW_ALL_DATA", JSON.stringify(full));
+
+        navigation("/dashboard/generateReport");
+
+        
+        
+
+    }
+
     // Scroll/jump helper for the FAB. Looks for element with id 'ecrModel' and focuses it.
 
 
@@ -1308,9 +1388,9 @@ const RegulatoryParams = () => {
                         </div>
 
                         {/* Generate Report */}
-                        <div className={`d-flex justify-content-end`} hidden={!isDataFetched}>
-                            <Link to="/dashboard/generateReport">
-                                <button className="btn btn-primary fs-7 mt-3" hidden={!isDataFetched}> Generate Report</button>
+                        <div className={`d-flex justify-content-end`} >
+                            <Link >
+                                <button onClick={handleSubmit} className="btn btn-primary fs-7 mt-3" > Generate Report</button>
                             </Link>
                         </div>
 
