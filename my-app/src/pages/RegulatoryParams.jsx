@@ -4,6 +4,8 @@ import '../css/RegulatoryParams.css';
 import { url, decryptData, encryptData, postEncrypted2 } from "../security";
 import { showToast } from '../App';
 import { GlobalContext } from "../Tools/GlobalContext.jsx";
+import { bslUnit3, bslUnit45, cstpsUnit37, cstpsUnit89, kpkdUnit5, kpkUnit14, ktpsUnit6, ktpsUnit810, ntpsUnit35, paralitpsUnit67, paralitpsUnit8, parastpsUnit34 } from "../../../globals.jsx";
+import { all } from "axios";
 const RegulatoryParams = () => {
     const { setUnit, setGlobalTag } = React.useContext(GlobalContext);
     const [isDataFetched, setIsDataFetched] = useState(false);
@@ -34,10 +36,9 @@ const RegulatoryParams = () => {
     const [selectedUnit, setSelectedUnit] = useState("");
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    useEffect(() => {
-        fetchParamsData();
+    const [allData, setAllData] = useState({});
 
-    }, [])
+
 
     // Inject minimal FAB CSS so you can drop this component into your existing styles without editing CSS files
     useEffect(() => {
@@ -94,248 +95,902 @@ const RegulatoryParams = () => {
     }, []);
 
 
-    async function handleSearch(startDate, endDate) {
-        try {
-            let payload = {
-                encryptedData: encryptData({
-                    p_UnitId: 1,
-                    p_CompanyId: 1,
-                    p_StartDate: startDate,
-                    p_EndDate: endDate,
-                    p_ARR: 22.9,
-                    p_FGMOS: false,
-                    p_FCCRawCoal : consumption.ARCC.value || 100,
-                    p_FCCWashedCoal : consumption.AWCC.value || 100,
-                    p_FCCImportedCoal : consumption.AICC.value || 100,
-                    p_IOIMTBFAchieved : otherParams.AMTBF.value || 100,
-                    p_IC : regParamsData.IC.value || 100,
-                    p_NAVF : regParamsData.NAVF.value || 100,
-                    p_NSHR : regParamsData.NSHR.value || 100,
-                    p_NAPC : regParamsData.NAPC.value || 100 ,
-                    p_NSFOC : regParamsData.NSFOC.value || 100 ,
-                    p_NTL : regParamsData.NTL.value || 100,
-                    p_NSL : regParamsData.NSL.value || 100 ,
-                    p_NFC : regParamsData.NFC.value || 100,
-                    p_NFCEWC : regParamsData.NFCEWC.value || 100 ,
-                    p_ROE : regParamsData.ROE.value || 100,
-                    p_NADLURGCV : regParamsData.NADLURGCV.value || 100 ,
-                    p_NADLUWGCV : regParamsData.NADLUWGCV.value || 100 ,
-                    p_GenerationMus : genAndCons.AGEN.value || 100,
-                    p_AuxiliaryConsumptionMus : genAndCons.AAPC.value || 100 ,
-                    p_FCRawCoal : costs.ARCLC.value || 100 ,
-                    p_FCWashedCoal : costs.AWCLC.value || 100 ,
-                    p_FCImportedCoal : costs.AICLC.value || 100 ,
-                    p_FCLDO : costs.ALDOLC.value || 100 ,
-                    p_FCFO : costs.AFOLC.value || 100 ,
-                    p_FCCOtherVariableCosts : otherParams.OVC.value || 100 ,
-                    p_FCCActualTransitLossRsCrores : otherParams.ATL.value || 100 ,
-                    p_PDCTDR : otherParams.PDCTDR.value || 100 ,
-                    p_OPDCTDR : otherParams.OPDCTDR.value || 100 ,
-                    p_ADCTDR : otherParams.ADCTDR.value || 100 ,
-                    p_PDCHDS : otherParams.PDCHDS.value || 100 ,
-                    p_OPDCHDS : otherParams.OPDCHDS.value || 100 ,
-                    p_ADCHDS : otherParams.ADCHDS.value || 100 ,
-                    p_PDCLDS : otherParams.PDCLDS.value || 100,
-                    p_OPDCLDS : otherParams.OPDCLDS.value || 100 ,
-                    p_ADCLDS : otherParams.ADCLDS.value || 100 , 
-                    p_GCVRawCoalAsBilled : genAndCons.ARGCVB.value || 100,
-                    p_GCVWashedCoalAsBilled : genAndCons.AWGCVB.value || 100,
-                    p_GCVImportedCoalAsBilled : genAndCons.AIGCVB.value || 100,
-                    p_GCVRawCoalAsRecieved : genAndCons.ARGCVR.value || 100,
-                    p_GCVWashedCoalAsRecieved : genAndCons.AWGCVR.value || 100 ,
-                    p_GCVImportedCoalAsRecieved : genAndCons.AIGCVR.value || 100 ,
-                    p_GCVLDO : genAndCons.ALDOGCV.value || 100 ,
-                    p_GCVFO : genAndCons.AFOGCV.value || 100 ,
-                    p_GCVCombinedCoalGCVAfterStackingLossAsFiredBunkeredGCV : genAndCons.ACGCV.value || 100,
-                    p_FLCRawCoal : costs.ARCLC.value || 100 ,
-                    p_FLCWashedCoal : costs.AWCLC.value || 100 ,
-                    p_FLCImportedCoal : costs.AICLC.value || 100 ,
-                    p_FLCLDO : costs.ALDOLC.value || 100 ,
-                    p_FLCFO : costs.AFOLC.value || 100,
-                    p_FCCActualTransitLoss : otherParams.ATL.value || 100,
-                    p_IOIPeakAVFAchieved : otherParams.APAVF.value || 100
 
-
-
-                })
-            }
-            const response = await fetch(`${url}/api/allCalculations`, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
-                },
-                body: JSON.stringify(payload)
-            });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const res = await response.json();
-            console.log('api/allCalculations response:', res); // Debugging
-            const decryptedRes = decryptData(res.data);
-            console.log('Decrypted Response:', decryptedRes); // Debugging
-
-
-            sessionStorage.clear('regparams');
-            sessionStorage.setItem('regparams', (JSON.stringify(decryptedRes) || {}));
-            const result = decryptedRes[0]?.result;
-
-const mainData =
-    typeof result === "string"
-        ? JSON.parse(result)?.MainData ?? {}
-        : result?.MainData ?? {};
-
-            console.log('Main Data:', mainData); // Debugging
-            Object.entries(mainData).forEach((data) => {
-                regParamsData[data[0]] ? updateRegParamValue(data[0], data[1]) :
-                    genAndCons[data[0]] ? updategenAndCons(data[0], data[1]) :
-                        costs[data[0]] ? updatecosts(data[0], data[1]) :
-                            consumption[data[0]] ? updateconsumption(data[0], data[1]) :
-                                otherParams[data[0]] ? updateotherParams(data[0], data[1]) :
-                                    updateconsumption(data[0], data[1])
-
-            })
-
-            console.log('res', decryptedRes)
-            setIsDataFetched(true);
-        } catch (error) {
-            console.log("error message handle Search ", error);
-
-        }
-    }
 
 
     const [regParamsData, setregParamsData] = useState({
-        IC: { class: 'col-3', label: "Installed Capacity (MW)", value: 1920 },
-        NAVF: { class: 'col-3', label: "Availability Factor (%)", value: 80 },
-        NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: 2688},
-        NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: 7.8 },
-        NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: 1 },
-        NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: 0.8 },
-        NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: 120 },
-        NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: 1134.32 },
-        NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: 1123.35 },
-        ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: 161.54 },
-        NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: 650 },
-        NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: 300 },
+        IC: { class: 'col-3', label: "Installed Capacity (MW)", value: allData.IC },
+        NAVF: { class: 'col-3', label: "Availability Factor (%)", value: allData.NAVF },
+        NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: allData.NSHR },
+        NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: allData.NAPC },
+        NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: allData.NSFOC },
+        NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: allData.NTL },
+        NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: allData.NSL },
+        NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: allData.NFC },
+        NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: allData.NFCEWC },
+        ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: allData.ROE },
+        NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: allData.NADLURGCV },
+        NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: allData.NADLUWGCV },
     });
     const [genAndCons, setgenAndCons] = useState({
-        AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: 715.58, highlight: false },
-        AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: 86.756, highlight: false },
-        ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: 646679, highlight: true },
-        AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: 10, highlight: true },
-        AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: 26244, highlight: true },
-        ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: 10, highlight: true },
-        AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value:   10, highlight: true },
-        AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: 4060, highlight: true },
-        ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: 3550, highlight: true },
-        AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: 4693, highlight: true },
-        ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: 4060, highlight: true }
+        AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: allData.AGEN, highlight: false },
+        AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: allData.AAPCM, highlight: false },
+        ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: allData.ARGCVB, highlight: true },
+        AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: allData.AWGCVB, highlight: true },
+        AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: allData.AIGCVB, highlight: true },
+        ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: allData.ARGCVR, highlight: true },
+        AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: allData.AWGCVR, highlight: true },
+        AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: allData.AIGCVR, highlight: true },
+        ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: allData.ALDOGCV, highlight: true },
+        AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: allData.AFOGCV, highlight: true },
+        ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: allData.ACGCV, highlight: true }
     })
     const [costs, setcosts] = useState({
-        ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: 3766, highlight: false },
-        AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: 4693, highlight: false },
-        AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value:10657, highlight: false },
-        ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: 10593, highlight: false },
-        AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: 3185, highlight: false },
-        IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: 4495, highlight: false },
-        IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: 4580, highlight: false },
-        IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: 111340, highlight: false }
+        ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: allData.ARCLC, highlight: false },
+        AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: allData.AWCLC, highlight: false },
+        AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: allData.AICLC, highlight: false },
+        ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: allData.ALDOLC, highlight: false },
+        AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: allData.AFOLC, highlight: false },
+        IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: allData.IRCCC, highlight: false },
+        IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: allData.IWCCC, highlight: false },
+        IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: allData.IICCC, highlight: false }
     })
     const [consumption, setconsumption] = useState({
-        ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: 49015.35, highlight: false },
-        AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: 39047.69, highlight: false },
-        AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: 4495, highlight: false },
-        ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: 4580, highlight: false },
-        AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: 111340, highlight: false }
+        ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: allData.ARCC, highlight: false },
+        AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: allData.AWCC, highlight: false },
+        AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: allData.AICC, highlight: false },
+        ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: allData.ALDOLC, highlight: false },
+        AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: allData.AFOLC, highlight: false }
     })
     const [otherParams, setotherParams] = useState({
-        OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: 10, highlight: false },
-        ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: 0.89, highlight: false },
-        ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: 2.59, highlight: false },
-        AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: 56, highlight: false },
-        ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: 0.5, highlight: false },
-        APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: 86, highlight: false },
-        PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: 1, highlight: false },
-        OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: 10, highlight: false },
-        ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: 10, highlight: false },
-        PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: 10, highlight: false },
-        OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: 10, highlight: true },
-        ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: 10, highlight: false },
-        PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: 10, highlight: false },
-        OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: 10, highlight: false },
-        ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: 10, highlight: false }
+        OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: allData.OVC, highlight: false },
+        ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: allData.ATL, highlight: false },
+        ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: allData.ATLC, highlight: false },
+        AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: allData.AMTBF, highlight: false },
+        ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: allData.ARR, highlight: false },
+        APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: allData.APAVF, highlight: false },
+        PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: allData.PDCTDR, highlight: false },
+        OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: allData.OPDCTDR, highlight: false },
+        ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: allData.ADCTDR, highlight: false },
+        PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: allData.PDCHDS, highlight: false },
+        OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: allData.OPDCHDS, highlight: true },
+        ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: allData.ADCHDS, highlight: false },
+        PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: allData.PDCLDS, highlight: false },
+        OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: allData.OPDCLDS, highlight: false },
+        ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: allData.ADCLDS, highlight: false }
     })
 
-    const fetchParamsData = async () => {
-        const loginPromise = await new Promise(async (resolve, reject) => {
-            try {
-                let payload = {
-                    encryptedData: encryptData({
-                        p_UnitId: 1,
-                        p_CompanyId: 1,
-                        p_StartDate: '2025-04-01',
-                        p_EndDate: '2025-04-05',
-                        p_ARR: 22.9,
-                        p_FGMOS: false
-                    })
-                }
-                const response = await fetch(`${url}/api/allCalculations`, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const res = await response.json();
-                console.log('api/allCalculations response:', res); // Debugging
-                const decryptedRes = decryptData(res.data);
-                console.log('Decrypted Response:', decryptedRes); // Debugging
 
-                resolve('Data fetched and state updated successfully');
-                sessionStorage.clear('regparams');
-                sessionStorage.setItem('regparams', JSON.stringify(decryptedRes).result);
-                localStorage.setItem('PeakAVFAchieved',otherParams.APAVF.value);
-                localStorage.setItem('StationHeatRate',regParamsData.NSHR.value);
-
-                const mainData = JSON.parse(decryptedRes).result.MainData;
-                console.log('Main Data:', mainData); // Debugging
-                Object.entries(mainData).forEach((data) => {
-                    regParamsData[data[0]] ? updateRegParamValue(data[0], data[1]) :
-                        genAndCons[data[0]] ? updategenAndCons(data[0], data[1]) :
-                            costs[data[0]] ? updatecosts(data[0], data[1]) :
-                                consumption[data[0]] ? updateconsumption(data[0], data[1]) :
-                                    otherParams[data[0]] ? updateotherParams(data[0], data[1]) :
-                                        updateconsumption(data[0], data[1])
-
+    useEffect(() => {
+        switch (selectedUnit) {
+            case 'BSL_Unit-3':
+                setAllData(bslUnit3)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: bslUnit3.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: bslUnit3.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: bslUnit3.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: bslUnit3.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: bslUnit3.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: bslUnit3.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: bslUnit3.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: bslUnit3.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: bslUnit3.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: bslUnit3.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: bslUnit3.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: bslUnit3.NADLUWGCV },
                 })
 
-                console.log('res', decryptedRes)
-            } catch (error) {
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: bslUnit3.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: bslUnit3.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: bslUnit3.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: bslUnit3.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: bslUnit3.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: bslUnit3.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: bslUnit3.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: bslUnit3.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: bslUnit3.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: bslUnit3.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: bslUnit3.ACGCV, highlight: true }
+                })
 
-            }
-        })
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: bslUnit3.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: bslUnit3.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: bslUnit3.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: bslUnit3.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: bslUnit3.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: bslUnit3.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: bslUnit3.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: bslUnit3.IICCC, highlight: false }
+                })
 
-        showToast({
-            pending: "Please wait...",
-            success: (data) => data,
-            error: (error) => error
-        }, "default", loginPromise)
-            .catch((err) => {
-                console.error('Caught error in catch block:', err); // Debugging
-            });
-    }
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: bslUnit3.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: bslUnit3.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: bslUnit3.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: bslUnit3.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: bslUnit3.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: bslUnit3.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: bslUnit3.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: bslUnit3.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: bslUnit3.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: bslUnit3.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: bslUnit3.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: bslUnit3.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: bslUnit3.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: bslUnit3.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: bslUnit3.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: bslUnit3.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: bslUnit3.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: bslUnit3.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: bslUnit3.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: bslUnit3.ADCLDS, highlight: false }
+                })
+                break;
+            case 'BSL_Unit-4-5':
+                setAllData(bslUnit45)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: bslUnit45.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: bslUnit45.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: bslUnit45.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: bslUnit45.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: bslUnit45.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: bslUnit45.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: bslUnit45.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: bslUnit45.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: bslUnit45.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: bslUnit45.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: bslUnit45.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: bslUnit45.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: bslUnit45.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: bslUnit45.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: bslUnit45.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: bslUnit45.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: bslUnit45.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: bslUnit45.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: bslUnit45.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: bslUnit45.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: bslUnit45.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: bslUnit45.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: bslUnit45.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: bslUnit45.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: bslUnit45.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: bslUnit45.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: bslUnit45.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: bslUnit45.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: bslUnit45.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: bslUnit45.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: bslUnit45.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: bslUnit45.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: bslUnit45.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: bslUnit45.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: bslUnit45.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: bslUnit45.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: bslUnit45.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: bslUnit45.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: bslUnit45.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: bslUnit45.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: bslUnit45.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: bslUnit45.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: bslUnit45.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: bslUnit45.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: bslUnit45.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: bslUnit45.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: bslUnit45.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: bslUnit45.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: bslUnit45.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: bslUnit45.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: bslUnit45.ADCLDS, highlight: false }
+                })
+
+                break;
+            case 'CSTPS_Unit-3-7':
+                setAllData(cstpsUnit37)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: cstpsUnit37.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: cstpsUnit37.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: cstpsUnit37.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: cstpsUnit37.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: cstpsUnit37.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: cstpsUnit37.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: cstpsUnit37.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: cstpsUnit37.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: cstpsUnit37.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: cstpsUnit37.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: cstpsUnit37.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: cstpsUnit37.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: cstpsUnit37.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: cstpsUnit37.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit37.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit37.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit37.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: cstpsUnit37.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: cstpsUnit37.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: cstpsUnit37.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: cstpsUnit37.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: cstpsUnit37.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: cstpsUnit37.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: cstpsUnit37.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: cstpsUnit37.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: cstpsUnit37.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: cstpsUnit37.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: cstpsUnit37.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: cstpsUnit37.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: cstpsUnit37.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: cstpsUnit37.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: cstpsUnit37.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: cstpsUnit37.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: cstpsUnit37.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: cstpsUnit37.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: cstpsUnit37.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: cstpsUnit37.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: cstpsUnit37.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: cstpsUnit37.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: cstpsUnit37.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: cstpsUnit37.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: cstpsUnit37.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: cstpsUnit37.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: cstpsUnit37.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: cstpsUnit37.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: cstpsUnit37.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: cstpsUnit37.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: cstpsUnit37.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: cstpsUnit37.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: cstpsUnit37.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: cstpsUnit37.ADCLDS, highlight: false }
+                })
+                break;
+            case 'CSTPS_Unit-8-9':
+                setAllData(cstpsUnit89)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: cstpsUnit89.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: cstpsUnit89.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: cstpsUnit89.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: cstpsUnit89.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: cstpsUnit89.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: cstpsUnit89.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: cstpsUnit89.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: cstpsUnit89.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: cstpsUnit89.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: cstpsUnit89.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: cstpsUnit89.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: cstpsUnit89.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: cstpsUnit89.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: cstpsUnit89.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit89.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit89.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: cstpsUnit89.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: cstpsUnit89.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: cstpsUnit89.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: cstpsUnit89.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: cstpsUnit89.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: cstpsUnit89.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: cstpsUnit89.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: cstpsUnit89.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: cstpsUnit89.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: cstpsUnit89.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: cstpsUnit89.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: cstpsUnit89.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: cstpsUnit89.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: cstpsUnit89.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: cstpsUnit89.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: cstpsUnit89.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: cstpsUnit89.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: cstpsUnit89.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: cstpsUnit89.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: cstpsUnit89.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: cstpsUnit89.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: cstpsUnit89.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: cstpsUnit89.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: cstpsUnit89.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: cstpsUnit89.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: cstpsUnit89.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: cstpsUnit89.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: cstpsUnit89.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: cstpsUnit89.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: cstpsUnit89.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: cstpsUnit89.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: cstpsUnit89.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: cstpsUnit89.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: cstpsUnit89.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: cstpsUnit89.ADCLDS, highlight: false }
+                })
+                break;
+            case 'KPKD_Unit-1-4':
+                setAllData(kpkUnit14)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: kpkUnit14.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: kpkUnit14.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: kpkUnit14.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: kpkUnit14.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: kpkUnit14.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: kpkUnit14.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: kpkUnit14.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: kpkUnit14.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: kpkUnit14.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: kpkUnit14.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: kpkUnit14.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: kpkUnit14.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: kpkUnit14.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: kpkUnit14.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: kpkUnit14.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: kpkUnit14.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: kpkUnit14.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: kpkUnit14.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: kpkUnit14.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: kpkUnit14.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: kpkUnit14.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: kpkUnit14.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: kpkUnit14.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: kpkUnit14.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: kpkUnit14.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: kpkUnit14.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: kpkUnit14.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: kpkUnit14.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: kpkUnit14.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: kpkUnit14.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: kpkUnit14.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: kpkUnit14.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: kpkUnit14.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: kpkUnit14.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: kpkUnit14.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: kpkUnit14.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: kpkUnit14.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: kpkUnit14.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: kpkUnit14.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: kpkUnit14.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: kpkUnit14.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: kpkUnit14.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: kpkUnit14.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: kpkUnit14.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: kpkUnit14.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: kpkUnit14.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: kpkUnit14.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: kpkUnit14.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: kpkUnit14.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: kpkUnit14.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: kpkUnit14.ADCLDS, highlight: false }
+                })
+                break;
+            case 'KPKD_Unit-5':
+                setAllData(kpkdUnit5)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: kpkdUnit5.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: kpkdUnit5.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: kpkdUnit5.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: kpkdUnit5.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: kpkdUnit5.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: kpkdUnit5.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: kpkdUnit5.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: kpkdUnit5.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: kpkdUnit5.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: kpkdUnit5.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: kpkdUnit5.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: kpkdUnit5.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: kpkdUnit5.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: kpkdUnit5.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: kpkdUnit5.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: kpkdUnit5.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: kpkdUnit5.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: kpkdUnit5.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: kpkdUnit5.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: kpkdUnit5.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: kpkdUnit5.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: kpkdUnit5.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: kpkdUnit5.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: kpkdUnit5.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: kpkdUnit5.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: kpkdUnit5.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: kpkdUnit5.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: kpkdUnit5.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: kpkdUnit5.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: kpkdUnit5.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: kpkdUnit5.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: kpkdUnit5.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: kpkdUnit5.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: kpkdUnit5.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: kpkdUnit5.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: kpkdUnit5.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: kpkdUnit5.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: kpkdUnit5.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: kpkdUnit5.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: kpkdUnit5.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: kpkdUnit5.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: kpkdUnit5.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: kpkdUnit5.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: kpkdUnit5.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: kpkdUnit5.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: kpkdUnit5.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: kpkdUnit5.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: kpkdUnit5.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: kpkdUnit5.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: kpkdUnit5.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: kpkdUnit5.ADCLDS, highlight: false }
+                })
+                break;
+            case 'KTPS_Unit-6':
+                setAllData(ktpsUnit6)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: ktpsUnit6.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: ktpsUnit6.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: ktpsUnit6.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: ktpsUnit6.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: ktpsUnit6.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: ktpsUnit6.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: ktpsUnit6.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: ktpsUnit6.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: ktpsUnit6.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: ktpsUnit6.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: ktpsUnit6.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: ktpsUnit6.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: ktpsUnit6.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: ktpsUnit6.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit6.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit6.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit6.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: ktpsUnit6.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: ktpsUnit6.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: ktpsUnit6.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: ktpsUnit6.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: ktpsUnit6.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: ktpsUnit6.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: ktpsUnit6.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: ktpsUnit6.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: ktpsUnit6.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: ktpsUnit6.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: ktpsUnit6.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: ktpsUnit6.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: ktpsUnit6.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: ktpsUnit6.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: ktpsUnit6.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: ktpsUnit6.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: ktpsUnit6.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: ktpsUnit6.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: ktpsUnit6.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: ktpsUnit6.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: ktpsUnit6.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: ktpsUnit6.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: ktpsUnit6.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: ktpsUnit6.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: ktpsUnit6.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: ktpsUnit6.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: ktpsUnit6.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: ktpsUnit6.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: ktpsUnit6.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: ktpsUnit6.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: ktpsUnit6.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: ktpsUnit6.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: ktpsUnit6.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: ktpsUnit6.ADCLDS, highlight: false }
+                })
+                break;
+            case 'KTPS_Unit-8-10':
+                setAllData(ktpsUnit810)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: ktpsUnit810.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: ktpsUnit810.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: ktpsUnit810.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: ktpsUnit810.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: ktpsUnit810.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: ktpsUnit810.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: ktpsUnit810.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: ktpsUnit810.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: ktpsUnit810.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: ktpsUnit810.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: ktpsUnit810.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: ktpsUnit810.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: ktpsUnit810.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: ktpsUnit810.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit810.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit810.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: ktpsUnit810.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: ktpsUnit810.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: ktpsUnit810.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: ktpsUnit810.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: ktpsUnit810.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: ktpsUnit810.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: ktpsUnit810.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: ktpsUnit810.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: ktpsUnit810.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: ktpsUnit810.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: ktpsUnit810.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: ktpsUnit810.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: ktpsUnit810.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: ktpsUnit810.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: ktpsUnit810.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: ktpsUnit810.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: ktpsUnit810.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: ktpsUnit810.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: ktpsUnit810.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: ktpsUnit810.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: ktpsUnit810.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: ktpsUnit810.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: ktpsUnit810.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: ktpsUnit810.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: ktpsUnit810.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: ktpsUnit810.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: ktpsUnit810.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: ktpsUnit810.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: ktpsUnit810.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: ktpsUnit810.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: ktpsUnit810.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: ktpsUnit810.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: ktpsUnit810.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: ktpsUnit810.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: ktpsUnit810.ADCLDS, highlight: false }
+                })
+                break;
+            case 'NTPS_Unit-3-5':
+                setAllData(ntpsUnit35)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: ntpsUnit35.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: ntpsUnit35.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: ntpsUnit35.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: ntpsUnit35.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: ntpsUnit35.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: ntpsUnit35.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: ntpsUnit35.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: ntpsUnit35.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: ntpsUnit35.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: ntpsUnit35.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: ntpsUnit35.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: ntpsUnit35.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: ntpsUnit35.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: ntpsUnit35.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: ntpsUnit35.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: ntpsUnit35.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: ntpsUnit35.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: ntpsUnit35.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: ntpsUnit35.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: ntpsUnit35.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: ntpsUnit35.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: ntpsUnit35.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: ntpsUnit35.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: ntpsUnit35.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: ntpsUnit35.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: ntpsUnit35.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: ntpsUnit35.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: ntpsUnit35.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: ntpsUnit35.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: ntpsUnit35.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: ntpsUnit35.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: ntpsUnit35.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: ntpsUnit35.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: ntpsUnit35.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: ntpsUnit35.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: ntpsUnit35.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: ntpsUnit35.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: ntpsUnit35.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: ntpsUnit35.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: ntpsUnit35.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: ntpsUnit35.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: ntpsUnit35.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: ntpsUnit35.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: ntpsUnit35.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: ntpsUnit35.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: ntpsUnit35.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: ntpsUnit35.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: ntpsUnit35.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: ntpsUnit35.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: ntpsUnit35.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: ntpsUnit35.ADCLDS, highlight: false }
+                })
+                break;
+            case 'PARAS_TPS_Unit-3-4':
+                setAllData(parastpsUnit34)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: parastpsUnit34.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: parastpsUnit34.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: parastpsUnit34.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: parastpsUnit34.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: parastpsUnit34.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: parastpsUnit34.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: parastpsUnit34.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: parastpsUnit34.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: parastpsUnit34.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: parastpsUnit34.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: parastpsUnit34.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: parastpsUnit34.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: parastpsUnit34.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: parastpsUnit34.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: parastpsUnit34.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: parastpsUnit34.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: parastpsUnit34.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: parastpsUnit34.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: parastpsUnit34.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: parastpsUnit34.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: parastpsUnit34.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: parastpsUnit34.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: parastpsUnit34.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: parastpsUnit34.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: parastpsUnit34.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: parastpsUnit34.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: parastpsUnit34.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: parastpsUnit34.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: parastpsUnit34.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: parastpsUnit34.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: parastpsUnit34.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: parastpsUnit34.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: parastpsUnit34.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: parastpsUnit34.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: parastpsUnit34.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: parastpsUnit34.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: parastpsUnit34.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: parastpsUnit34.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: parastpsUnit34.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: parastpsUnit34.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: parastpsUnit34.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: parastpsUnit34.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: parastpsUnit34.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: parastpsUnit34.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: parastpsUnit34.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: parastpsUnit34.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: parastpsUnit34.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: parastpsUnit34.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: parastpsUnit34.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: parastpsUnit34.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: parastpsUnit34.ADCLDS, highlight: false }
+                })
+                break;
+            case 'PARALI_TPS_Unit-6-7':
+                setAllData(paralitpsUnit67)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: paralitpsUnit67.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: paralitpsUnit67.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: paralitpsUnit67.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: paralitpsUnit67.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: paralitpsUnit67.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: paralitpsUnit67.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: paralitpsUnit67.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: paralitpsUnit67.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: paralitpsUnit67.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: paralitpsUnit67.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: paralitpsUnit67.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: paralitpsUnit67.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: paralitpsUnit67.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: paralitpsUnit67.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit67.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit67.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit67.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit67.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit67.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit67.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: paralitpsUnit67.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: paralitpsUnit67.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: paralitpsUnit67.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: paralitpsUnit67.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: paralitpsUnit67.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: paralitpsUnit67.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: paralitpsUnit67.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: paralitpsUnit67.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: paralitpsUnit67.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: paralitpsUnit67.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: paralitpsUnit67.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: paralitpsUnit67.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: paralitpsUnit67.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: paralitpsUnit67.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: paralitpsUnit67.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: paralitpsUnit67.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: paralitpsUnit67.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: paralitpsUnit67.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: paralitpsUnit67.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: paralitpsUnit67.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: paralitpsUnit67.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: paralitpsUnit67.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: paralitpsUnit67.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: paralitpsUnit67.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: paralitpsUnit67.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: paralitpsUnit67.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: paralitpsUnit67.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: paralitpsUnit67.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: paralitpsUnit67.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: paralitpsUnit67.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: paralitpsUnit67.ADCLDS, highlight: false }
+                })
+                break;
+            case 'PARALI_TPS_Unit-8':
+                setAllData(paralitpsUnit8)
+                setregParamsData({
+                    IC: { class: 'col-3', label: "Installed Capacity (MW)", value: paralitpsUnit8.IC },
+                    NAVF: { class: 'col-3', label: "Availability Factor (%)", value: paralitpsUnit8.NAVF },
+                    NSHR: { class: 'col-3', label: "Station Heat Rate (kcal/kwh)", value: paralitpsUnit8.NSHR },
+                    NAPC: { class: 'col-3', label: "Auxiliiary Power Consumption (%)", value: paralitpsUnit8.NAPC },
+                    NSFOC: { class: 'col-3', label: "Specific Oil Consumption (ml/kwh)", value: paralitpsUnit8.NSFOC },
+                    NTL: { class: 'col-3', label: "Coal Transit Loss (%)", value: paralitpsUnit8.NTL },
+                    NSL: { class: 'col-3', label: "Stored GCV Loss (kcal/kg)", value: paralitpsUnit8.NSL },
+                    NFC: { class: 'col-3', label: "Fixed Cost (Rs.Crores)", value: paralitpsUnit8.NFC },
+                    NFCEWC: { class: 'col-3', label: "Fixed Cost Excluding Water Charges (Rs.Crores)", value: paralitpsUnit8.NFCEWC },
+                    ROE: { class: 'col-3', label: "ROE applicable for incentive (Rs.Crores)", value: paralitpsUnit8.ROE },
+                    NADLURGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Raw Coal) (kcal/kg)", value: paralitpsUnit8.NADLURGCV },
+                    NADLUWGCV: { class: 'col-6', label: "Max. Allowable Difference in Loading end and Unloading end GCV (Washed Coal) (kcal/kg)", value: paralitpsUnit8.NADLUWGCV },
+                })
+
+                setgenAndCons({
+                    AGEN: { class: 'col-4', label: "Actual Generation (MUs)", value: paralitpsUnit8.AGEN, highlight: false },
+                    AAPC: { class: 'col-4', label: "Actual Auxiliary Consumption (MUs)", value: paralitpsUnit8.AAPCM, highlight: false },
+                    ARGCVB: { class: 'col-4', label: "Actual Raw Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit8.ARGCVB, highlight: true },
+                    AWGCVB: { class: 'col-4', label: "Actual Washed Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit8.AWGCVB, highlight: true },
+                    AIGCVB: { class: 'col-4', label: "Actual Imported Coal GCV (As Billed) (kcal/kg)", value: paralitpsUnit8.AIGCVB, highlight: true },
+                    ARGCVR: { class: 'col-4', label: "Actual Raw Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit8.ARGCVR, highlight: true },
+                    AWGCVR: { class: 'col-4', label: "Actual Washed Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit8.AWGCVR, highlight: true },
+                    AIGCVR: { class: 'col-4', label: "Actual Imported Coal GCV (As Received) (kcal/kg)", value: paralitpsUnit8.AIGCVR, highlight: true },
+                    ALDOGCV: { class: 'col-4', label: "LDO GCV (kcal/kg)", value: paralitpsUnit8.ALDOGCV, highlight: true },
+                    AFOGCV: { class: 'col-4', label: "FO GCV (kcal/kg)", value: paralitpsUnit8.AFOGCV, highlight: true },
+                    ACGCV: { class: 'col-4', label: "Actual Combined Coal GCV after stacking loss (kcal/kg)", value: paralitpsUnit8.ACGCV, highlight: true }
+                })
+
+                setcosts({
+                    ARCLC: { class: 'col-4', label: "Actual Raw Coal Landed cost (Rs./MT)", value: paralitpsUnit8.ARCLC, highlight: false },
+                    AWCLC: { class: 'col-4', label: "Actual Washed Coal Landed cost (Rs./MT)", value: paralitpsUnit8.AWCLC, highlight: false },
+                    AICLC: { class: 'col-4', label: "Actual Imported Coal Landed cost (Rs./MT)", value: paralitpsUnit8.AICLC, highlight: false },
+                    ALDOLC: { class: 'col-4', label: "Actual LDO cost (Rs./KL)", value: paralitpsUnit8.ALDOLC, highlight: false },
+                    AFOLC: { class: 'col-4', label: "Actual FO Landed cost (Rs./KL)", value: paralitpsUnit8.AFOLC, highlight: false },
+                    IRCCC: { class: 'col-4', label: "Input Raw Coal Consumption Cost (Rs./MT)", value: paralitpsUnit8.IRCCC, highlight: false },
+                    IWCCC: { class: 'col-4', label: "Input Washed Coal Consumption Cost (Rs./MT)", value: paralitpsUnit8.IWCCC, highlight: false },
+                    IICCC: { class: 'col-4', label: "Input Imported Coal Consumption Cost (Rs./MT)", value: paralitpsUnit8.IICCC, highlight: false }
+                })
+
+                setconsumption({
+                    ARCC: { class: 'col-4', label: "Actual Raw Coal Consumption (MT)", value: paralitpsUnit8.ARCC, highlight: false },
+                    AWCC: { class: 'col-4', label: "Actual Washed Coal Consumption (MT)", value: paralitpsUnit8.AWCC, highlight: false },
+                    AICC: { class: 'col-4', label: "Actual Imported Coal Consumption (MT)", value: paralitpsUnit8.AICC, highlight: false },
+                    ALDOC: { class: 'col-4', label: "Actual LDO Consumption (KL)", value: paralitpsUnit8.ALDOLC, highlight: false },
+                    AFOC: { class: 'col-4', label: "Actual FO Consumption (KL)", value: paralitpsUnit8.AFOLC, highlight: false }
+                })
+
+                setotherParams({
+                    OVC: { class: 'col-3', label: "Other Variable costs (Rs)", value: paralitpsUnit8.OVC, highlight: false },
+                    ATL: { class: 'col-3', label: "Actual Transit loss (%)", value: paralitpsUnit8.ATL, highlight: false },
+                    ATLC: { class: 'col-3', label: "Actual Transit loss cost (Rs. Crores)", value: paralitpsUnit8.ATLC, highlight: false },
+                    AMTBF: { class: 'col-3', label: "MTBF achieved (days)", value: paralitpsUnit8.AMTBF, highlight: false },
+                    ARR: { class: 'col-3', label: "Ramp rate achieved (%/min)", value: paralitpsUnit8.ARR, highlight: false },
+                    APAVF: { class: 'col-3', label: "Peak AVF achieved (%)", value: paralitpsUnit8.APAVF, highlight: false },
+                    PDCTDR: { class: 'col-3', label: "Peak Hour DC (total)", value: paralitpsUnit8.PDCTDR, highlight: false },
+                    OPDCTDR: { class: 'col-3', label: "Off-peak Hour DC (total)", value: paralitpsUnit8.OPDCTDR, highlight: false },
+                    ADCTDR: { class: 'col-3', label: "Avg 24-Hour DC (total)", value: paralitpsUnit8.ADCTDR, highlight: false },
+                    PDCHDS: { class: 'col-3', label: "Peak Hour DC (HDS)", value: paralitpsUnit8.PDCHDS, highlight: false },
+                    OPDCHDS: { class: 'col-3', label: "Off-peak Hour DC (HDS)", value: paralitpsUnit8.OPDCHDS, highlight: true },
+                    ADCHDS: { class: 'col-3', label: "Avg 24-Hour DC (HDS)", value: paralitpsUnit8.ADCHDS, highlight: false },
+                    PDCLDS: { class: 'col-3', label: "Peak Hour DC (LDS)", value: paralitpsUnit8.PDCLDS, highlight: false },
+                    OPDCLDS: { class: 'col-3', label: "Off-peak Hour DC (LDS)", value: paralitpsUnit8.OPDCLDS, highlight: false },
+                    ADCLDS: { class: 'col-3', label: "Avg 24-Hour DC (LDS)", value: paralitpsUnit8.ADCLDS, highlight: false }
+                })
+                break;
+
+            default:
+                break;
+        }
+    }, [selectedUnit])
+
 
     const updateotherParams = (key, newValue) => {
         setotherParams(prevData => {
             const existingItem = prevData?.[key];
-            if (!existingItem) return prevData; 
+            if (!existingItem) return prevData;
             return {
                 ...prevData,
                 [key]: {
@@ -510,7 +1165,7 @@ const mainData =
 
                                 <div className="col-md-2">
                                     <button
-                                        onClick={() => handleSearch(startDate, endDate)}
+                                        onClick={() => { }}
                                         type="button"
                                         className="btn btn-search w-100"
                                         title="Search"
