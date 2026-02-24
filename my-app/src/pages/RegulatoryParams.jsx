@@ -1121,7 +1121,10 @@ const RegulatoryParams = () => {
         let full = {TotalGain : z.netGainLoss , GainAVF : z.gainAVF , GainNSHR : z.gainNSHR , GainAPC : z.gainAPC,
             GainSFOC : z.gainSFOC, GainTL : z.gainTL, NormativeAVF : regParamsData.NAVF.value , AchievedAVF : y.AAVFTDR,
             NormativeHeatRate : regParamsData.NSHR.value , AchievedHeatRate  : y.ASHR , NAPC : regParamsData.NAPC.value,
-            AAPC : y.AAPC
+            AAPC : y.AAPC , NSFOC : regParamsData.NSFOC.value , ASFOC : y.ASFOC ,  NTL : regParamsData.NTL.value , ATL : y.ASL
+            , APAVF: otherParams.APAVF.value , AFOC : y.AFOCC , AWCC : consumption.AWCC.value , AICCC  : y.AICCC,
+            TNFCC : y.TNFCC , NSLDOC : y.NLDOC , GainMTBF : z.gainMTBF , GainRR : z.gainRampRate  , GainPAVF : z.gainPeakAVF,
+            ROE_RP : x.ROE_RP , ROE_MTBF_PERCENT : x.converted_ROE_MTBF
          }
        
         localStorage.setItem("NEW_ALL_DATA", JSON.stringify(full));

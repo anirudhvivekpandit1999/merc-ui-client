@@ -114,40 +114,63 @@ function waitForVisibleElement(ref, maxFrames = 60) {
 }
 
 const Parameters = ({ name = "AVF", header, data }) => {
-  const safeData = data
-  console.log("safe",safeData);
+  
+  const y = localStorage.getItem("NEW_ALL_DATA")
+  const x = JSON.parse(y)
+  console.log(x)
+  const AAPC = parseFloat(x.AAPC)
+  const APAVF = parseFloat(x.APAVF)
+  const ATL = parseFloat(x.ATL)
+  const AAVFTDR = parseFloat(x.AchievedAVF)
+  const ASFOC = parseFloat(x.ASFOC)
+  const AFOC = parseFloat(x.AFOC)
+  const AWCC = parseFloat(x.AWCC)
+  const AICCC = parseFloat(x.AICCC)
+  const NSFOC = parseFloat(x.NSFOC)
+  const TNFCC = parseFloat(x.TNFCC)
+  const NSLDOC = parseFloat(x.NSLDOC)
+  const GainAVF = parseFloat(x.GainAVF)
+    const GainMTBF = parseFloat(x.GainMTBF)
+    const GainNSHR = parseFloat(x.GainNSHR)
+    const GainRR = parseFloat(x.GainRR)
+    const GainPAVF = parseFloat(x.GainPAVF)
+    const GainAPC = parseFloat(x.GainAPC)
+    const GainSFOC = parseFloat(x.GainSFOC)
+    const GainTL = parseFloat(x.GainTL)
+    const ROE_RP = parseFloat(x.ROE_RP)
+    const ROE_MTBF_PERCENT = parseFloat(x.ROE_MTBF_PERCENT)
 
   const analyticsTable = (() => {
   switch (name) {
     case "AVF":
       return [
-        { Parameter: "AAPC", Value: safeData.MainData.AAPC },
-        { Parameter: "APAVF", Value: safeData.MainData.APAVF },
-        { Parameter: "ATL", Value: safeData.MainData.ATL }
+        { Parameter: "AAPC", Value: AAPC.toFixed(2) },
+        { Parameter: "APAVF", Value: APAVF.toFixed(2) },
+        { Parameter: "ATL", Value: ATL.toFixed(2)}
       ];
     case "HR":
       return [
-        { Parameter: "Avg Heat Rate", Value: safeData.MainData.ATL },
-        { Parameter: "AAVFTDR", Value: safeData.Calculations.AAVFTDR },
-        { Parameter: "ACSFOC", Value: safeData.Calculations.ACSFOC }
+        { Parameter: "Avg Heat Rate", Value: ATL.toFixed(2) },
+        { Parameter: "AAVFTDR", Value: AAVFTDR.toFixed(2) },
+        { Parameter: "ACSFOC", Value: ASFOC.toFixed(2) }
       ];
     case "AP":
       return [
-        { Parameter: "AFOC", Value: safeData.MainData.AFOC },
-        { Parameter: "AWCC", Value: safeData.MainData.AWCC },
-        { Parameter: "AICCC", Value: safeData.MainData.AICCC }
+        { Parameter: "AFOC", Value: AFOC.toFixed(2)},
+        { Parameter: "AWCC", Value: AWCC.toFixed(2) },
+        { Parameter: "AICCC", Value: AICCC.toFixed(2) }
       ];
     case "SO":
       return [
-        { Parameter: "ACSFOC", Value: safeData.Calculations.ACSFOC },
-        { Parameter: "ASFOC", Value: safeData.Calculations.ASFOC },
-        { Parameter: "NSFFOC", Value: safeData.Calculations.NSFFOC }
+        { Parameter: "ACSFOC", Value: ASFOC.toFixed(2) },
+        { Parameter: "ASFOC", Value: ASFOC.toFixed(2) },
+        { Parameter: "NSFFOC", Value: NSFOC.toFixed(2) }
       ];
     case "TL":
       return [
-        { Parameter: "ATL", Value: safeData.MainData.ATL },
-        { Parameter: "TNFCC", Value: safeData.Calculations.TNFCC },
-        { Parameter: "NSLDOC", Value: safeData.Calculations.NSLDOC }
+        { Parameter: "ATL", Value: ATL.toFixed(2) },
+        { Parameter: "TNFCC", Value: TNFCC.toFixed(2) },
+        { Parameter: "NSLDOC", Value: NSLDOC.toFixed(2) }
       ];
     default:
       return [];
@@ -158,33 +181,33 @@ const performanceTable = (() => {
   switch (name) {
     case "AVF":
       return [
-        { Parameter: "Gain AVF", Value: safeData.CalculateGainValues.GainAVF },
-        { Parameter: "Gain MTBF", Value: safeData.CalculateGainValues.GainMTBF },
-        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+        { Parameter: "Gain AVF", Value: GainAVF.toFixed(2) },
+        { Parameter: "Gain MTBF", Value: GainMTBF.toFixed(2) },
+        { Parameter: "Gain NSHR", Value: GainNSHR.toFixed(2) }
       ];
     case "HR":
       return [
-        { Parameter: "Gain MTBF", Value: safeData.CalculateGainValues.GainMTBF },
-        { Parameter: "Gain Ramp Rate", Value: safeData.CalculateGainValues.GainRampRate },
-        { Parameter: "Gain Peak AVF", Value: safeData.CalculateGainValues.GainPeakAVF }
+        { Parameter: "Gain MTBF", Value: GainMTBF.toFixed(2) },
+        { Parameter: "Gain Ramp Rate", Value: GainRR.toFixed(2) },
+        { Parameter: "Gain Peak AVF", Value: GainPAVF.toFixed(2) }
       ];
     case "AP":
       return [
-        { Parameter: "Gain APC", Value: safeData.CalculateGainValues.GainAPC },
-        { Parameter: "Gain AVF", Value: safeData.CalculateGainValues.GainAVF },
-        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+        { Parameter: "Gain APC", Value: GainAPC.toFixed(2) },
+        { Parameter: "Gain AVF", Value: GainAVF.toFixed(2) },
+        { Parameter: "Gain NSHR", Value: GainNSHR.toFixed(2) }
       ];
     case "SO":
       return [
-        { Parameter: "Gain SFOC", Value: safeData.CalculateGainValues.GainSFOC },
-        { Parameter: "Gain TL", Value: safeData.CalculateGainValues.GainTL },
-        { Parameter: "Gain NSHR", Value: safeData.CalculateGainValues.GainNSHR }
+        { Parameter: "Gain SFOC", Value: GainSFOC.toFixed(2) },
+        { Parameter: "Gain TL", Value: GainTL.toFixed(2) },
+        { Parameter: "Gain NSHR", Value: GainNSHR.toFixed(2) }
       ];
     case "TL":
       return [
-        { Parameter: "Gain TL", Value: safeData.CalculateGainValues.GainTL },
-        { Parameter: "Gain Ramp Rate", Value: safeData.CalculateGainValues.GainRampRate },
-        { Parameter: "Gain Peak AVF", Value: safeData.CalculateGainValues.GainPeakAVF }
+        { Parameter: "Gain TL", Value: GainTL.toFixed(2) },
+        { Parameter: "Gain Ramp Rate", Value: GainRR.toFixed(2) },
+        { Parameter: "Gain Peak AVF", Value: GainPAVF.toFixed(2) }
       ];
     default:
       return [];
@@ -195,16 +218,16 @@ const particularsTable = (() => {
   switch (name) {
     case "AVF":
       return [
-        { Parameter: "Gain SFOC", Mus: safeData.CalculateGainValues.GainSFOC, Per: safeData.CalculateROEValues.ROE_RP },
-        { Parameter: "Gain TL", Mus: safeData.CalculateGainValues.GainTL, Per: safeData.CalculateROEValues.ROE_MTBF_Percent }
+        { Parameter: "Gain SFOC", Mus: GainSFOC.toFixed(2), Per: ROE_RP.toFixed(2) },
+        { Parameter: "Gain TL", Mus: GainTL.toFixed(2), Per: ROE_MTBF_PERCENT.toFixed(2) }
       ];
     case "HR":
     case "AP":
     case "SO":
     case "TL":
       return [
-        { Parameter: "ROE RP", Mus: safeData.CalculateGainValues.GainSFOC, Per: safeData.CalculateROEValues.ROE_RP },
-        { Parameter: "ROE MTBF %", Mus: safeData.CalculateGainValues.GainTL, Per: safeData.CalculateROEValues.ROE_MTBF_Percent }
+        { Parameter: "ROE RP", Mus: GainSFOC.toFixed(2), Per: ROE_RP.toFixed(2) },
+        { Parameter: "ROE MTBF %", Mus: GainTL.toFixed(2), Per: ROE_MTBF_PERCENT.toFixed(2) }
       ];
     default:
       return [];

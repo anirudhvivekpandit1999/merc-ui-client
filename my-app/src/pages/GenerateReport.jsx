@@ -300,7 +300,7 @@ const GenerateReport = () => {
             const storedData = localStorage.getItem("NEW_ALL_DATA");
 
             const x = JSON.parse(storedData);
-            
+
             console.log(x.TotalGain);
             console.log(x.GainAVF);
             console.log(x.GainNSHR);
@@ -313,22 +313,26 @@ const GenerateReport = () => {
             console.log(x.AchievedHeatRate);
             console.log(x.NAPC);
             console.log(x.AAPC);
-            
-            
-            
-            
+
+
+
+
             const totalGain = parseFloat(x.TotalGain)
             const gainAVF = parseFloat(x.GainAVF)
             const GainNSHR = parseFloat(x.GainNSHR)
             const GainAPC = parseFloat(x.GainAPC)
             const GainSFOC = parseFloat(x.GainSFOC)
             const GainTL = parseFloat(x.GainTL)
-            const NAVF  = parseFloat(x.NormativeAVF) 
+            const NAVF = parseFloat(x.NormativeAVF)
             const AchievedAVF = parseFloat(x.AchievedAVF)
             const NormativeHeatRate = parseFloat(x.NormativeHeatRate)
             const AchievedHeatRate = parseFloat(x.AchievedHeatRate)
             const NAPC = parseFloat(x.NAPC)
-
+            const AAPC = parseFloat(x.AAPC)
+            const NSFOC = parseFloat(x.NSFOC)
+            const ASFOC = parseFloat(x.ASFOC)
+            const NTL = parseFloat(x.NTL)
+            const ATL = parseFloat(x.ATL)
 
             setCardValue([
                 {
@@ -396,17 +400,17 @@ const GenerateReport = () => {
                 {
                     parameter: "Auxiliary Power Consumption (%)",
                     normative: NAPC.toFixed(2),
-                    achieved: main?.AAPC ?? 0
+                    achieved: AAPC.toFixed(2)
                 },
                 {
                     parameter: "Specific Oil Consumption (ml/kwh)",
-                    normative: main?.NSFOC ?? 0,
-                    achieved: main?.ASFOC ?? 0
+                    normative: NSFOC.toFixed(2),
+                    achieved: ASFOC.toFixed(2)
                 },
                 {
                     parameter: "Transit Loss (%)",
-                    normative: main?.NTL ?? 0,
-                    achieved: main?.ATL ?? 0
+                    normative: NTL.toFixed(2),
+                    achieved: ATL.toFixed(2)
                 }
             ]);
 
